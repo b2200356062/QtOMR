@@ -1,0 +1,872 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>800</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background-color: black;</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QStackedWidget" name="sayfalar">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>400</width>
+      <height>850</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: black;</string>
+    </property>
+    <widget class="QWidget" name="anasayfa">
+     <widget class="QPushButton" name="anahtarkamera">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>270</y>
+        <width>321</width>
+        <height>81</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Source Code Pro</family>
+        <pointsize>-1</pointsize>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font-size: 24px;
+color: black;
+background-color: blue;
+border-style: solid;
+border-width: 1px;
+border-radius: 10px;
+color: white;</string>
+      </property>
+      <property name="text">
+       <string>Cevap Anahtarı Okut</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="cikis">
+      <property name="geometry">
+       <rect>
+        <x>80</x>
+        <y>660</y>
+        <width>231</width>
+        <height>71</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Source Code Pro</family>
+        <pointsize>-1</pointsize>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font-size: 24px;
+background-color: &quot;red&quot;;
+border-style: solid;
+border-width: 1px;
+border-radius: 10px;
+color: white;</string>
+      </property>
+      <property name="text">
+       <string>Çıkış</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="sinavgaleri">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>390</y>
+        <width>321</width>
+        <height>81</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Source Code Pro</family>
+        <pointsize>-1</pointsize>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font-size: 24px;
+color: black;
+background-color: blue;
+border-style: solid;
+border-width: 1px;
+border-radius: 10px;
+color: white;</string>
+      </property>
+      <property name="text">
+       <string>Sınav Kağıdını
+Galeriden Seç</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="sinavkamera">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>510</y>
+        <width>321</width>
+        <height>81</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Source Code Pro</family>
+        <pointsize>-1</pointsize>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font-size: 24px;
+color: black;
+background-color: blue;
+border-style: solid;
+border-width: 1px;
+border-radius: 10px;
+color: white;</string>
+      </property>
+      <property name="text">
+       <string>Sınav Kağıdı Okut</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="title">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>30</y>
+        <width>401</width>
+        <height>71</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Source Code Pro</family>
+        <pointsize>-1</pointsize>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font-size: 26px;
+color :&quot;blue&quot;;
+border-style: solid;
+border-width: 1px;
+border-radius: 10px;
+color: white;</string>
+      </property>
+      <property name="text">
+       <string>OPTİK OKUYUCU UYGULAMASI</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignmentFlag::AlignCenter</set>
+      </property>
+      <property name="wordWrap">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="anahtargaleri">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>140</y>
+        <width>321</width>
+        <height>91</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Source Code Pro</family>
+        <pointsize>-1</pointsize>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font-size: 24px;
+color: black;
+background-color: blue;
+border-style: solid;
+border-width: 1px;
+border-radius: 10px;
+color: white;
+</string>
+      </property>
+      <property name="text">
+       <string>Cevap Anahtarını
+Galeriden Seç</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="cevapgalerisayfa">
+     <widget class="QPushButton" name="cgkaydet">
+      <property name="geometry">
+       <rect>
+        <x>130</x>
+        <y>720</y>
+        <width>141</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Source Code Pro</family>
+        <pointsize>10</pointsize>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: blue;
+border-style: solid;
+border-width: 1px;
+border-radius: 10px;
+color: white;</string>
+      </property>
+      <property name="text">
+       <string>Cevap Anahtarını
+Kaydet</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="cggeri">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>720</y>
+        <width>110</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Source Code Pro</family>
+        <pointsize>12</pointsize>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: blue;
+border-style: solid;
+border-width: 1px;
+border-radius: 10px;
+color: white;</string>
+      </property>
+      <property name="text">
+       <string>Geri</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="cgsec">
+      <property name="geometry">
+       <rect>
+        <x>280</x>
+        <y>720</y>
+        <width>110</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Source Code Pro</family>
+        <pointsize>12</pointsize>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: blue;
+border-style: solid;
+border-width: 1px;
+border-radius: 10px;
+color: white;</string>
+      </property>
+      <property name="text">
+       <string>Fotoğraf
+Seç</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="cglabel">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>9</y>
+        <width>400</width>
+        <height>691</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="cevapkamerasayfa">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>800</height>
+      </size>
+     </property>
+     <widget class="QPushButton" name="ckkaydet">
+      <property name="geometry">
+       <rect>
+        <x>210</x>
+        <y>710</y>
+        <width>171</width>
+        <height>61</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Source Code Pro</family>
+        <pointsize>13</pointsize>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: blue;
+border-style: solid;
+border-width: 1px;
+border-radius: 10px;
+color: white;</string>
+      </property>
+      <property name="text">
+       <string>Cevap Anahtarını
+Kaydet</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="ckgeri">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>710</y>
+        <width>171</width>
+        <height>61</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Source Code Pro</family>
+        <pointsize>13</pointsize>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: blue;
+border-style: solid;
+border-width: 1px;
+border-radius: 10px;
+color: white;</string>
+      </property>
+      <property name="text">
+       <string>Geri</string>
+      </property>
+     </widget>
+     <widget class="QVideoWidget" name="ckpreview" native="true">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>9</y>
+        <width>401</width>
+        <height>671</height>
+       </rect>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="sinavgalerisayfa">
+     <widget class="QPushButton" name="sgdegerlendir">
+      <property name="geometry">
+       <rect>
+        <x>140</x>
+        <y>720</y>
+        <width>121</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Source Code Pro</family>
+        <pointsize>12</pointsize>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: blue;
+border-style: solid;
+border-width: 1px;
+border-radius: 10px;
+color: white;</string>
+      </property>
+      <property name="text">
+       <string>Sınavı
+Değerlendir</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="sggeri">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>720</y>
+        <width>111</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Source Code Pro</family>
+        <pointsize>14</pointsize>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: blue;
+border-style: solid;
+border-width: 1px;
+border-radius: 10px;
+color: white;</string>
+      </property>
+      <property name="text">
+       <string>Geri</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="sgsec">
+      <property name="geometry">
+       <rect>
+        <x>280</x>
+        <y>720</y>
+        <width>111</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Source Code Pro</family>
+        <pointsize>12</pointsize>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: blue;
+border-style: solid;
+border-width: 1px;
+border-radius: 10px;
+color: white;</string>
+      </property>
+      <property name="text">
+       <string>Fotoğraf
+Seç</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="sglabel">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>10</y>
+        <width>401</width>
+        <height>681</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="sinavkamerasayfa">
+     <widget class="QPushButton" name="skdegerlendir">
+      <property name="geometry">
+       <rect>
+        <x>210</x>
+        <y>710</y>
+        <width>181</width>
+        <height>61</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Source Code Pro</family>
+        <pointsize>14</pointsize>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: blue;
+border-style: solid;
+border-width: 1px;
+border-radius: 10px;
+color: white;</string>
+      </property>
+      <property name="text">
+       <string>Sınavı
+Değerlendir</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="skgeri">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>710</y>
+        <width>181</width>
+        <height>61</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Source Code Pro</family>
+        <pointsize>16</pointsize>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: blue;
+border-style: solid;
+border-width: 1px;
+border-radius: 10px;
+color: white;</string>
+      </property>
+      <property name="text">
+       <string>Geri</string>
+      </property>
+     </widget>
+     <widget class="QVideoWidget" name="skpreview" native="true">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>401</width>
+        <height>681</height>
+       </rect>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="degerlendirmasayfasi">
+     <widget class="QLabel" name="dslabel">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>590</y>
+        <width>401</width>
+        <height>111</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Source Code Pro</family>
+        <pointsize>-1</pointsize>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font-size: 24px;
+color: white;</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="dsgeri">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>720</y>
+        <width>171</width>
+        <height>61</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Source Code Pro</family>
+        <pointsize>15</pointsize>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: blue;
+border-style: solid;
+border-width: 1px;
+border-radius: 10px;
+color: white;</string>
+      </property>
+      <property name="text">
+       <string>Geri</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="dsimglabel">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>381</width>
+        <height>551</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font-size: 20px;</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="kisikaydet">
+      <property name="geometry">
+       <rect>
+        <x>210</x>
+        <y>720</y>
+        <width>171</width>
+        <height>61</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Source Code Pro</family>
+        <pointsize>15</pointsize>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: blue;
+border-style: solid;
+border-width: 1px;
+border-radius: 10px;
+color: white;</string>
+      </property>
+      <property name="text">
+       <string>Sonucu Kaydet</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="sonuclar">
+     <widget class="QPlainTextEdit" name="adgir">
+      <property name="geometry">
+       <rect>
+        <x>100</x>
+        <y>50</y>
+        <width>281</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: white;</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="ad">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>50</y>
+        <width>41</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Source Code Pro</family>
+        <pointsize>15</pointsize>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: white;</string>
+      </property>
+      <property name="text">
+       <string>Ad:</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="soyad">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>100</y>
+        <width>81</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Source Code Pro</family>
+        <pointsize>15</pointsize>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: white;</string>
+      </property>
+      <property name="text">
+       <string>Soyad:</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="numara">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>170</y>
+        <width>181</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Source Code Pro</family>
+        <pointsize>12</pointsize>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: white;</string>
+      </property>
+      <property name="text">
+       <string>Öğrenci Numarası:</string>
+      </property>
+     </widget>
+     <widget class="QPlainTextEdit" name="soyadgir">
+      <property name="geometry">
+       <rect>
+        <x>100</x>
+        <y>110</y>
+        <width>281</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: white;</string>
+      </property>
+     </widget>
+     <widget class="QPlainTextEdit" name="numaragir">
+      <property name="geometry">
+       <rect>
+        <x>200</x>
+        <y>170</y>
+        <width>171</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: white;</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="sonuckaydet">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>230</y>
+        <width>181</width>
+        <height>61</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Source Code Pro</family>
+        <pointsize>15</pointsize>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: blue;
+border-style: solid;
+border-width: 1px;
+border-radius: 10px;
+color: white;</string>
+      </property>
+      <property name="text">
+       <string>Sonucu Kaydet</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="sonucgor">
+      <property name="geometry">
+       <rect>
+        <x>200</x>
+        <y>230</y>
+        <width>191</width>
+        <height>61</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Source Code Pro</family>
+        <pointsize>15</pointsize>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: blue;
+border-style: solid;
+border-width: 1px;
+border-radius: 10px;
+color: white;</string>
+      </property>
+      <property name="text">
+       <string>Diğer Sonuçları
+Gör</string>
+      </property>
+     </widget>
+     <widget class="QTableView" name="tablo">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>310</y>
+        <width>351</width>
+        <height>421</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: white;
+color: black;</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="sonucgeri">
+      <property name="geometry">
+       <rect>
+        <x>150</x>
+        <y>740</y>
+        <width>91</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Source Code Pro</family>
+        <pointsize>15</pointsize>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: blue;
+border-style: solid;
+border-width: 1px;
+border-radius: 10px;
+color: white;</string>
+      </property>
+      <property name="text">
+       <string>Geri</string>
+      </property>
+     </widget>
+    </widget>
+   </widget>
+  </widget>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QVideoWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">qvideowidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

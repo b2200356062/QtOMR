@@ -1,0 +1,32 @@
+canny 200 300, blur size 7,7 5te calısanlar
+0, 1, 2, 3, 4, 5, 6, 7, 9(!) 10(!), 11(!),  13, 14 tamam
+ 
+2: sağda 1 pikselle kareyi bulamuyor blur 5, size 7 7 ile çözüldü size 9,9 ile bozuluyor
+5: aşağıda 1 pikselle kareyi bulamıyor
+6: sağda 1 pikselle kareyi bulamadığı için en büyük kare olarak yanıtlar kısmını alıyor
+5 6 bluru arttırarak (2) çözüldü
+
+8: muhtemelen piksel bulamıyor
+
+9: sağ üstte piksel bozuluyor - blur size 7,7 5   blur 3teyken çalışıyodu
+ 
+10: sağ üstte piksel bozuluyor - blur size 7,7 5  blur 3teyken calısıyodu
+ 
+11: sağ üstte 1 pikselle kareyi bulamıyor - blur 3 olunca buluyor size 7,7 5 te her tarafı bozuluyor
+
+12: foto çok yakın, düz çizgiyi de piksellere ayırıyor, -  blur 3 olunca çalıştı blur 5te calısmıyor
+
+13: aşağıda 1 pikselle kareyi bulamıyor - blur 3 ile çalıştı
+
+15: aşırı bozuk
+16: aşırı bozuk
+
+17: sağ üstte bir pikselle kareyi bulamıyor
+
+18: yan döndürüyor çalışır gibi
+
+19: yanlış perspektif alıyor
+
+20: aşırı bozuk 
+
+21: yan döndürüyor bozuk

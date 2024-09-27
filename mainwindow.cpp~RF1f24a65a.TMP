@@ -1,0 +1,637 @@
+#include "mainwindow.h"
+#include "./ui_mainwindow.h"
+
+#include "opencv2/core.hpp"
+#include "opencv2/highgui.hpp"
+#include "opencv2/imgcodecs.hpp"
+#include "opencv2/imgproc.hpp"
+
+#ifdef Q_OS_ANDROID
+#include <QCoreApplication>
+#include <QtCore/private/qandroidextras_p.h>
+#endif
+
+#include <iostream>
+#include <vector>
+#include <string>
+#include <cstdio>
+
+using namespace cv;
+using namespace std;
+
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent)
+    , ui(new Ui::MainWindow)
+{
+    ui->setupUi(this);
+    QWidget::setWindowTitle("Optik Okuyucu");
+
+    init();
+    // OPENCV OLMAZSA VİDEOSİNK EKLE
+    //mySink = new QVideoSink;
+    //captureSession.setVideoOutput(mySink);
+    ui->sonuc->hide();
+    ui->degerlendirme->hide();
+    ui->net->hide();
+}
+
+MainWindow::~MainWindow()
+{
+    delete ui;
+}
+
+bool checkCameraAvailability()
+{
+    if (QMediaDevices::videoInputs().count() > 0)
+    {
+        return true;
+    }
+    else
+    {
+        qDebug() << "kamera bulunamadı\n";
+        return false;
+    }
+}
+
+// #if defined(Q_OS_ANDROID)
+// void MainWindow::accessAllFiles()
+// {
+//     if(QOperatingSystemVersion::current() < QOperatingSystemVersion(QOperatingSystemVersion::Android, 11)) {
+//         qDebug() << "it is less then Android 11 - ALL FILES permission isn't possible!";
+//         return;
+//     }
+// // Here you have to set your PackageName
+// #define PACKAGE_NAME "package:org.ekkescorner.examples.sharex"
+//     jboolean value = QJniObject::callStaticMethod<jboolean>("android/os/Environment", "isExternalStorageManager");
+//     if(value == false) {
+//         qDebug() << "requesting ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION";
+//         QJniObject ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION = QJniObject::getStaticObjectField( "android/provider/Settings", "ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION","Ljava/lang/String;" );
+//         QJniObject intent("android/content/Intent", "(Ljava/lang/String;)V", ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION.object());
+//         QJniObject jniPath = QJniObject::fromString(PACKAGE_NAME);
+//         QJniObject jniUri = QJniObject::callStaticObjectMethod("android/net/Uri", "parse", "(Ljava/lang/String;)Landroid/net/Uri;", jniPath.object<jstring>());
+//         QJniObject jniResult = intent.callObjectMethod("setData", "(Landroid/net/Uri;)Landroid/content/Intent;", jniUri.object<jobject>() );
+//         QtAndroidPrivate::startActivity(intent, 0);
+//     } else {
+//         qDebug() << "SUCCESS ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION";
+//     }
+// }
+// #endif
+
+#ifdef Q_OS_ANDROID
+bool checkPermission() {
+    QList<bool> permissions;
+
+    auto r = QtAndroidPrivate::checkPermission("android.permission.READ_EXTERNAL_STORAGE").result();
+    if (r != QtAndroidPrivate::Authorized)
+    {
+        r = QtAndroidPrivate::requestPermission("android.permission.READ_EXTERNAL_STORAGE").result();
+        if (r == QtAndroidPrivate::Denied)
+            permissions.append(false);
+    }
+    r = QtAndroidPrivate::checkPermission("android.permission.WRITE_EXTERNAL_STORAGE").result();
+    if (r != QtAndroidPrivate::Authorized)
+    {
+        r = QtAndroidPrivate::requestPermission("android.permission.WRITE_EXTERNAL_STORAGE").result();
+        if (r == QtAndroidPrivate::Denied)
+            permissions.append(false);
+    }
+    r = QtAndroidPrivate::checkPermission("android.permission.READ_MEDIA_IMAGES").result();
+    if (r != QtAndroidPrivate::Authorized)
+    {
+        r = QtAndroidPrivate::requestPermission("android.permission.READ_MEDIA_IMAGES").result();
+        if (r == QtAndroidPrivate::Denied)
+            permissions.append(false);
+    }
+    return (permissions.count() != 3 || 2);
+}
+#endif
+
+bool fotocekclicked = false;
+
+void MainWindow::init()
+{
+    checkPermission();
+
+    if(!checkCameraAvailability())
+    {
+        return;
+    }
+
+    QCameraPermission cameraPermission;
+    switch (qApp->checkPermission(cameraPermission))
+    {
+        case Qt::PermissionStatus::Undetermined:
+            qApp->requestPermission(cameraPermission, this, &MainWindow::init);
+            return;
+        case Qt::PermissionStatus::Denied:
+            qWarning("kamera izni verilmedi!");
+            return;
+        case Qt::PermissionStatus::Granted:
+            break;
+    }
+
+    const QList<QCameraDevice> cameras = QMediaDevices::videoInputs();
+
+    for (const QCameraDevice &cameraDevice : cameras) {
+        // arka kamera                                                  pc
+        if(cameraDevice.description() == "Rear Camera: 0" || cameraDevice.description() == "HD Webcam")
+        {
+            camera.reset(new QCamera(cameraDevice));
+        }
+    }
+    captureSession.setCamera(camera.data());
+    imageCapture.reset(new QImageCapture);
+    captureSession.setImageCapture(imageCapture.get());
+    captureSession.setVideoOutput(ui->camerawidget);
+    ui->camerawidget->hide();
+    ui->fotocek->hide();
+    ui->opencv->hide();
+}
+
+// GLOBAL VARIABLES
+
+// pc file path
+QString filePath = "C:\\Users\\melih\\Desktop";
+
+// android
+QString filePathAndroid = "/storage/emulated/0/DCIM/Camera";
+
+// fotoğraf galeriden mi kameradan mı
+bool isFromGallery = false;
+
+QString chosenPhotoName;
+
+void MainWindow::on_kamera_clicked()
+{
+    // 0 kamera
+    ui->stackedWidget->setCurrentIndex(0);
+    isFromGallery = false;
+    // değiştir
+    if(!camera->isActive() && fotocekclicked == false)
+    {
+        camera->start();
+        ui->camerawidget->show();
+        ui->fotocek->setGeometry({130, 730, 130, 50});
+        ui->fotocek->setText("Fotoğraf Çek");
+        ui->fotocek->show();
+        ui->kamera->setText("Kamerayı Kapat");
+    }
+    else if(!camera->isActive() && fotocekclicked == true)
+    {
+        qDebug() << "calıstı\n";
+        camera->stop();
+        ui->camerawidget->hide();
+        ui->fotocek->hide();
+        ui->opencv->hide();
+        ui->kamera->setText("Kamerayı Aç");
+        fotocekclicked = false;
+    }
+    else
+    {
+        camera->stop();
+        ui->camerawidget->hide();
+        ui->fotocek->hide();
+        ui->opencv->hide();
+        ui->kamera->setText("Kamerayı Aç");
+    }
+}
+
+void MainWindow::on_galeri_clicked()
+{
+    // buton ortalama
+    ui->opencv->setGeometry({140, 730, 130, 50});
+    ui->opencv->show();
+    ui->sonuc->hide();
+    ui->degerlendirme->hide();
+    ui->net->hide();
+
+    isFromGallery = true;
+
+    if(camera->isActive())
+    {
+        camera->stop();
+    }
+    //QString filter = "Images (*.png *.jpg *.jpeg)";
+
+// change file path for android
+#ifdef Q_OS_WIN
+    QString fileName = QFileDialog::getOpenFileName(this, "Bir fotoğraf seç", filePath);
+#endif
+#ifdef Q_OS_ANDROID
+    QString fileName = QFileDialog::getOpenFileName(this, "Bir fotoğraf seç", filePathAndroid);
+#endif
+
+    // ekrana koy
+    if(!fileName.isEmpty())
+    {
+        QPixmap pixmap(fileName);
+        ui->lastImagePreviewLabel->setPixmap(pixmap.scaled(ui->lastImagePreviewLabel->size(),
+                Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    }
+
+    QFileInfo info(fileName);
+
+    chosenPhotoName = info.absoluteFilePath();
+    qDebug() << "absolutefile path:  " << info.absoluteFilePath() << "\n";
+    qDebug() << "file systemabsolutefile path:  " << info.filesystemAbsoluteFilePath() << "\n";
+    qDebug() << "file path:  " << info.filePath() << "\n";
+    qDebug() << "dir :  " << info.dir() << "\n";
+}
+
+void MainWindow::on_fotocek_clicked()
+{
+    fotocekclicked = true;
+
+    if(fotocekclicked == true)
+    {
+        camera->setActive(true);
+        fotocekclicked = false;
+    }
+
+    if(camera->isActive())
+    {
+        imageCapture->captureToFile(filePath);
+        qDebug() << "image captured\n";
+        connect(imageCapture.get(), &QImageCapture::imageSaved, this, &MainWindow::imageSaved);
+        camera->setActive(false);
+        ui->opencv->show();
+        ui->fotocek->setGeometry({50,730,130,50});
+        ui->opencv->setGeometry({230, 730, 130, 50});
+        ui->fotocek->setText("Yeniden Çek");
+    }
+
+    qDebug() << camera->isActive() << "\n";
+}
+
+
+// kaydetmiyor
+void MainWindow::imageSaved(int id, const QString &fileName)
+{
+    Q_UNUSED(id);
+    //convertImage(QDir::toNativeSeparators(fileName));
+    connect(imageCapture.get(), &QImageCapture::imageCaptured, this, &MainWindow::processCapturedImage);
+
+    ui->statusbar->showMessage(tr("Captured image to \"%1\"").arg(QDir::toNativeSeparators(fileName)));
+    qDebug() << tr("Captured image to \"%1\"").arg(QDir::toNativeSeparators(fileName)) << "\n";
+
+    displayCapturedImage();
+
+}
+
+void MainWindow::convertImage(const QString &filePath)
+{
+    // Load the image
+    QImage image;
+    if (!image.load(filePath)) {
+        QMessageBox::critical(this, "Error", "Failed to load the image.");
+        return;
+    }
+
+    // Ask the user for the new format and file name
+    QString saveFileName = QFileDialog::getSaveFileName(
+        this,
+        "Save Image As",
+        QDir::homePath(),
+        "PNG (*.png);;JPEG (*.jpg *.jpeg)");
+
+    if (saveFileName.isEmpty()) {
+        QMessageBox::warning(this, "No File Selected", "No save file name was provided.");
+        return;
+    }
+
+    // Save the image in the new format
+    if (!image.save(saveFileName)) {
+        QMessageBox::critical(this, "Error", "Failed to save the image.");
+        return;
+    }
+
+    QMessageBox::information(this, "Success", "Image saved successfully.");
+}
+
+void MainWindow::displayCapturedImage()
+{
+    ui->stackedWidget->setCurrentIndex(1);
+}
+
+void MainWindow::processCapturedImage(int requestId, const QImage &img)
+{
+    Q_UNUSED(requestId);
+    QImage scaledImage = img.scaled(ui->camerawidget->size(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+
+    ui->lastImagePreviewLabel->setPixmap(QPixmap::fromImage(scaledImage));
+}
+
+// opencvyi çalıştır
+void MainWindow::on_opencv_clicked()
+{
+    ui->stackedWidget->setGeometry(10, 80, 371, 350);
+    ui->sonuc->show();
+    ui->degerlendirme->show();
+    ui->net->show();
+    runOpenCV();
+}
+
+// alanlara ayırma
+std::vector<cv::Mat> splitImage( cv::Mat & image, int M, int N );
+
+auto analyzeAnswers(std::vector<cv::Mat> answers, int sira)
+{
+    std::map<int, string> choices = {
+           {0, "Bos"},
+           {1, "A"},
+           {2, "B"},
+           {3, "C"},
+           {4, "D"},
+           {5, "E"},
+           {6, "Hatali"},
+    };
+
+    std::map<int, string> answermap;
+    std::map<int, vector<int>> soru;
+
+    // soru vectorunu olusturma
+    for( size_t i = 0; i < answers.size(); ++i )
+    {
+        //cv::cvtColor(answers[i], answers[i], cv::COLOR_BGR2GRAY);
+        int nonzeroes = cv::countNonZero(answers[i]);
+        //cv::imshow( "Image " + std::to_string( i ), answers[i] );
+        soru[(i / 5)].push_back(nonzeroes);
+    }
+
+
+    for(size_t i = 0; i < soru.size(); i++)
+    {
+        std::string cevap;
+
+        // seçilen şık
+        int maxnonzero = *std::max_element(soru[i].begin(), soru[i].end());
+
+        // threshold
+        auto minimum_value = 200;
+
+        // aynı soruda birden fazla şık işaretlenmisse
+        auto count = std::count_if(soru[i].begin(), soru[i].end(),[&](auto const& val){ return val >= minimum_value; });
+        if(count > 1){
+            cevap = choices.at(6);
+        }
+
+        else{
+            if(maxnonzero > 800){
+                // secilen şıkkın indexi
+                int choice = std::distance(soru[i].begin(), std::max_element(soru[i].begin(), soru[i].end()));
+
+                if(choice % 5 == 0){
+                    cevap = choices.at(1);
+                }
+                else if(choice % 5 == 1){
+                    cevap = choices.at(2);
+                }
+                else if(choice % 5 == 2){
+                    cevap = choices.at(3);
+                }
+                else if(choice % 5 == 3){
+                    cevap = choices.at(4);
+                }
+                else if(choice % 5 == 4){
+                    cevap = choices.at(5);
+                }
+            }
+            // boş cevap
+            else{
+                cevap = choices.at(0);
+            }
+        }
+        // 0. soru --> 1. soru
+        // 2. kısım ise soru indexi 11den başlar
+        if(sira == 1){
+            answermap.insert({ i+11 , cevap});
+        }
+        answermap.insert({ i+1 , cevap});
+    }
+    // for(auto i : soru){
+    //     for(size_t j = 0; j < i.second.size(); j++){
+    //         cout  << "soru: " << i.first << " nonzerolar: " << i.second.at(j) << endl;
+    //     }
+    // }
+    return answermap;
+}
+
+auto readOptic(const cv::Mat &img){
+
+    std::map<int, string> answermap;
+    std::map<int, string> answermap2;
+
+    cv::Mat firstpart;
+    cv::Mat secondpart;
+
+    cv::Rect cropfirstpart (79, 65, 345, 650);
+    cv::Rect cropsecondpart (570, 65, 345, 650);
+
+    firstpart = img(cropfirstpart);
+    secondpart = img(cropsecondpart);
+
+    std::vector<cv::Mat> firstanswers = splitImage(firstpart, 5 , 10);
+    std::vector<cv::Mat> secondanswers = splitImage(secondpart, 5 , 10);
+
+    answermap = analyzeAnswers(firstanswers, 0);
+    answermap2 = analyzeAnswers(secondanswers, 1);
+
+    answermap.insert(answermap2.begin(), answermap2.end());
+
+    return answermap;
+}
+
+void MainWindow::runOpenCV()
+{
+    int widthImg = 1280;
+    int heightImg = 720;
+
+    if(isFromGallery)
+    {
+        // fotoğraf galeridense
+        if(!chosenPhotoName.isEmpty()){
+            QString filePath = chosenPhotoName;
+            //qDebug() <<"filepath: " << filePath << "\n";
+        }
+        else{
+            qDebug() << "chosen photo name bos\n";
+        }
+    }
+    else
+    {
+        qDebug() << "galeriden deil";
+    }
+
+    std::string filepth = chosenPhotoName.toStdString();
+    cv::Mat img = cv::imread(filepth);
+
+    if(img.empty())
+    {
+        qDebug() << "img is empty\n";
+        return;
+    }
+
+    // preprocess
+    cv:: Mat grayimg;
+    cv::cvtColor(img, grayimg, cv::COLOR_BGR2GRAY);
+
+    cv::Mat scaledimg;
+    cv::resize(grayimg, scaledimg, cv::Size(widthImg, heightImg), cv::INTER_LINEAR);
+
+    cv::Mat blurredimg;
+    cv::GaussianBlur(scaledimg, blurredimg, cv::Size(5, 5), 1);
+
+    cv::Mat canniedimg;
+    cv::Canny(blurredimg, canniedimg, 10, 50);
+
+    cv::Mat copiedimg;
+    scaledimg.copyTo(copiedimg);
+
+    std::vector<std::vector<cv::Point>> contours;
+    std::vector<cv::Vec4i> hierarchy;
+
+    cv::findContours(canniedimg, contours, hierarchy, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_NONE);
+    // yeşil renk için tekrardan bgr olmalı
+
+    vector<vector<Point>> rectcon;
+    vector<Point> approxed;
+
+    for( size_t i = 0; i < contours.size(); i++ )
+    {
+        double area = contourArea(contours.at(i));
+        //std::cout << area << "\n";
+        if(area > 300){
+            double peri = arcLength(contours.at(i), true);
+            // köseler approxedda
+            approxPolyDP(contours.at(i), approxed, 0.02 * peri, true);
+
+            if(approxed.size() == 4){
+                rectcon.push_back(contours.at(i));
+            }
+        }
+    }
+    // for(auto i : approxed){
+    //     cout << "koseler: " << i << endl;
+    // }
+
+    // perspective src and dst
+    Point2f src[4];
+    src[0] = approxed.at(0);
+    src[1] = approxed.at(1);
+    src[2] = approxed.at(3);
+    src[3] = approxed.at(2);
+
+    Point2f dst[4];
+    dst[0] = Point(0 ,0);                   // sol üst
+    dst[1] = Point(0 , heightImg);          // sol alt
+    dst[2] = Point(widthImg, 0);            // sağ üst
+    dst[3] = Point(widthImg, heightImg);    // sağ alt
+
+    Mat perspectiveMat = cv::getPerspectiveTransform(src, dst);
+    Mat perspectiveimg;
+
+    warpPerspective(copiedimg, perspectiveimg, perspectiveMat, Size(widthImg, heightImg));
+
+    Mat thresh2;
+    // threshold cok önemli 155teyken 100 olan nonzero değerler 100 thresholdda 0a düşüyor
+    cv::threshold(perspectiveimg, thresh2, 100, 255, THRESH_BINARY_INV);
+
+    cv::Mat lastimg;
+    thresh2.copyTo(lastimg);
+
+
+    // cevapları değerlendirme ve yazdırma
+    std::map<int , string> answers = readOptic(lastimg);
+    QString answerText;
+
+    for(auto i : answers){
+        cout << "soru: " << i.first <<" cevap: "<< i.second << endl;
+        answerText.append(QString("soru: %1 ").arg(i.first));
+
+        // converting i std basic string to qstring
+        QString str = QString::fromUtf8(i.second.c_str());
+        answerText.append(QString(" cevap: %1 ").arg(str));
+    }
+
+    ui->sonuc->setText(answerText);
+
+    std::map<int, string> cevapkagidi;
+    cevapkagidi = {
+                   {1, "A"},
+                   {2, "A"},
+                   {3, "A"},
+                   {4, "A"},
+                   {5, "A"},
+                   {6, "A"},
+                   {7, "A"},
+                   {8, "A"},
+                   {9, "A"},
+                   {10, "A"},
+                   {11, "A"},
+                   {12, "A"},
+                   {13, "A"},
+                   {14, "A"},
+                   {15, "A"},
+                   {16, "A"},
+                   {17, "A"},
+                   {18, "A"},
+                   {19, "A"},
+                   {20, "A"},
+                   };
+
+    int dogrucevap = 0;
+    int yanliscevap = 0;
+    float net = 0.0;
+
+    QString degerlendirmeText;
+    for(auto i : answers){
+        int j = 1;
+        if(i.second == cevapkagidi[j]){
+            degerlendirmeText.append((QString("soru: %1 ").arg(i.first)));
+            degerlendirmeText.append("doğru ");
+            dogrucevap++;
+        }
+        else{
+            degerlendirmeText.append((QString("soru: %1 ").arg(i.first)));
+            degerlendirmeText.append("yanlış ");
+            yanliscevap++;
+        }
+        j++;
+    }
+
+    net = dogrucevap - (yanliscevap * 0.25);
+
+    qDebug() << dogrucevap << yanliscevap << net << "\n";
+    QString dogru = QString::number(dogrucevap);
+    QString yanlis = QString::number(yanliscevap);
+    QString n = QString::number(net);
+
+    QString netText;
+    netText.append((QString("Doğru Cevap: %1, Yanlış Cevap: %2, Net: %3").arg(dogru, yanlis, n)));
+
+    ui->degerlendirme->setText(degerlendirmeText);
+    ui->net->setText(netText);
+    // cv::namedWindow("display 3");
+    // cv::moveWindow("display 3", 600, 0);
+    // cv::imshow("display 3", perspectiveimg);
+    //firstpart = lastimg(Range(67, 417), Range(79, heightImg));
+}
+
+std::vector<cv::Mat> splitImage( cv::Mat & image, int M, int N )
+{
+    int width  = 65; //image.cols / M;
+    int height = 65; // image.rows / N;
+
+    std::vector<cv::Mat> result;
+
+    for( int i = 0; i < N; ++i )
+    {
+        for( int j = 0; j < M; ++j )
+        {
+            cv::Rect roi( width * j, height * i, width, height );
+            result.push_back( image( roi ) );
+        }
+    }
+
+    return result;
+}
